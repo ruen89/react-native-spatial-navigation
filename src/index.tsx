@@ -1,6 +1,4 @@
 export { SpatialApi } from './core'
-export * from './examples/BasicLayout'
-export * from './examples/GroupLayout'
 export * from './SpatialButton'
 export * from './SpatialGroup'
 export * from './SpatialNavigation'
