@@ -66,7 +66,7 @@ const colors = [
   'rgba(127, 106, 147, 0.7)',
 ]
 
-export function GroupLayout() {
+export function ExampleGroupLayout() {
   return (
     <SpatialNavigation>
       <View style={styles.root}>

@@ -15,7 +15,7 @@ const data = [
   Array(5).fill(0),
 ]
 
-export function BasicLayout() {
+export function ExampleBasicLayout() {
   return (
     <SpatialNavigation>
       <View style={styles.root}>
