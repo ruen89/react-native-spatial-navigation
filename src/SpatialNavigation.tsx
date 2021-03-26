@@ -5,7 +5,11 @@ import { SpatialGroup } from './SpatialGroup'
 
 /* SpatialNavigation
 ================================================================== */
-export function SpatialNavigation({ children }) {
+export function SpatialNavigation({
+  children,
+}: {
+  children: React.ReactNode | React.ReactNode[]
+}) {
   useEffect(() => {
     SpatialApi.init()
   }, [])

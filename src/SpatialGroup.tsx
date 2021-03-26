@@ -9,7 +9,9 @@ import { SpatialGroupContextState, SpatialGroupProps, SpatialId } from './types'
 
 /* Context & Provider
 ================================================================== */
-export const SpatialNavigationGroupContext = createContext<SpatialGroupContextState>()
+export const SpatialNavigationGroupContext = createContext<SpatialGroupContextState>(
+  {} as SpatialGroupContextState
+)
 
 /* SpatialGroup
 ================================================================== */
@@ -59,7 +61,7 @@ export function SpatialGroup(props: SpatialGroupProps) {
       value={{
         groupId,
         isFocused: false,
-        preferredChildFocusId: hasTVPreferredFocus && preferredChildFocusId,
+        ...(hasTVPreferredFocus ? { preferredChildFocusId } : {}),
       }}
     >
       {children}

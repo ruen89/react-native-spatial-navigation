@@ -37,7 +37,7 @@ export const SpatialButton = memo((props: SpatialButtonProps) => {
 
   useEffect(function isMounted() {
     const remove = register({
-      ref: elementRef.current,
+      ref: elementRef.current!,
       id: elementId,
       groupId,
       nodehandle: findNodeHandle(elementRef.current),
@@ -54,7 +54,7 @@ export const SpatialButton = memo((props: SpatialButtonProps) => {
   }, [])
 
   const handleFocus = useCallback(async () => {
-    updateFocus({ ref: elementRef.current, id: elementId, groupId })
+    updateFocus({ ref: elementRef.current!, id: elementId, groupId })
     if (typeof onFocus === 'function') {
       onFocus()
     }
@@ -67,7 +67,7 @@ export const SpatialButton = memo((props: SpatialButtonProps) => {
   }, [onBlur])
 
   const handleLayout = useCallback(() => {
-    elementRef.current.measure((fx, fy, width, height, px, py) => {
+    elementRef.current!.measure((fx, fy, width, height, px, py) => {
       // todo: combine register & updateLayout to one call
       updateLayout({ height, id: elementId, width, x: px, y: py })
     })

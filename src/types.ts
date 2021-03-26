@@ -28,7 +28,6 @@ export interface SpatialNavigationContextState {
 }
 
 export interface GetNextFocusHandles {
-  callBack: (props: NextFocusProps) => void
   id: SpatialId
   groupId: SpatialId
   ref: SpatialRef
@@ -45,9 +44,17 @@ export interface SpatialGroupContextState {
   preferredChildFocusId?: SpatialId
 }
 
-export interface SpatialGroupProps extends NextFocusGroup {
+export interface SpatialGroupProps extends Partial<NextFocusGroup> {
   children: React.ReactNode | React.ReactNode[]
   hasTVPreferredFocus?: boolean
+  id: SpatialId
+  preferredChildFocusIndex?: number
+  preferredChildFocusId?: number
+  shouldTrackChildren?: boolean
+}
+
+export interface SpatialGroupObject extends NextFocusGroup {
+  lastChildFocusedId?: SpatialId
   id: SpatialId
   groupParentId: SpatialId | undefined
   groupChildIds: SpatialId[]
@@ -56,17 +63,12 @@ export interface SpatialGroupProps extends NextFocusGroup {
   shouldTrackChildren?: boolean
 }
 
-export interface SpatialGroupObject
-  extends Omit<SpatialGroupProps, 'children' | 'hasTVPreferredFocus'> {
-  lastChildFocusedId?: SpatialId
-}
-
 export interface SpatialObject {
   id: SpatialId
   groupId: SpatialId
   ref: SpatialRef
   layout?: SpatialLayoutObject
-  nodehandle: number
+  nodehandle: number | null
   nextFocusRestrictions: NextFocusRestrictions
 }
 
