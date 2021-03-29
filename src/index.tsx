@@ -1,4 +1,5 @@
 export { SpatialApi } from './core'
+export * from './examples'
 export * from './SpatialButton'
 export * from './SpatialGroup'
 export * from './SpatialNavigation'
