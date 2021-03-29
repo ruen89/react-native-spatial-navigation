@@ -50,7 +50,7 @@ class SpatialNavigationApi {
   private state: SpatialState
 
   constructor() {
-    this.state = this.createStateObject(defaultState)
+    this.state = defaultState
   }
 
   // Init function - todo: add threshold props
