@@ -20,20 +20,20 @@ import {
   UpdateLayoutProps,
 } from './types'
 
-const stateHandler: ProxyHandler<SpatialState> = {
-  get(target: SpatialState, property: keyof SpatialState) {
-    //console.log(`Property ${property} has been read`, target);
-    return target[property]
-  },
-  set(
-    target: SpatialState,
-    property: keyof SpatialState,
-    value: SpatialObject[] & SpatialGroupObject[] & SpatialId & number & never
-  ) {
-    target[property] = value
-    return true
-  },
-}
+// const stateHandler: ProxyHandler<SpatialState> = {
+//   get(target: SpatialState, property: keyof SpatialState) {
+//     //console.log(`Property ${property} has been read`, target);
+//     return target[property]
+//   },
+//   set(
+//     target: SpatialState,
+//     property: keyof SpatialState,
+//     value: SpatialObject[] & SpatialGroupObject[] & SpatialId & number & never
+//   ) {
+//     target[property] = value
+//     return true
+//   },
+// }
 
 /* State
 ================================================================== */
@@ -499,18 +499,11 @@ class SpatialNavigationApi {
 
   private setState = (props: Partial<SpatialState>, action: string) => {
     const newState = { ...this.state, ...props }
-    // todo: fix this - no need to create store everytime
-    this.state = this.createStateObject(newState)
+    this.state = newState
 
     if (this.state.logStateChanges) {
       console.log(`Action: ${action}`, newState)
     }
-  }
-
-  private createStateObject = (
-    object: SpatialState & { action?: string }
-  ): SpatialState => {
-    return new Proxy({ ...object }, stateHandler)
   }
 }
 
