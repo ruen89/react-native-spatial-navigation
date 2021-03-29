@@ -1,8 +1,4 @@
-import {
-  StyleProp,
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from 'react-native'
+import { StyleProp, TouchableOpacity, ViewStyle } from 'react-native'
 
 export interface SpatialState {
   groups: SpatialGroupObject[]
@@ -49,7 +45,7 @@ export interface SpatialGroupProps extends Partial<NextFocusGroup> {
   hasTVPreferredFocus?: boolean
   id: SpatialId
   preferredChildFocusIndex?: number
-  preferredChildFocusId?: number
+  preferredChildFocusId?: SpatialId
   shouldTrackChildren?: boolean
 }
 
@@ -59,7 +55,7 @@ export interface SpatialGroupObject extends NextFocusGroup {
   groupParentId: SpatialId | undefined
   groupChildIds: SpatialId[]
   preferredChildFocusIndex?: number
-  preferredChildFocusId?: number
+  preferredChildFocusId?: SpatialId
   shouldTrackChildren?: boolean
 }
 
@@ -89,7 +85,7 @@ export interface SpatialButtonProps extends Partial<NextFocusRestrictions> {
   onBlur?: () => void
   onFocus?: () => void
   onPress?: () => void
-  style?: StyleProp<TouchableOpacityProps>
+  style?: StyleProp<ViewStyle>
 }
 
 export interface NextFocusElements {
