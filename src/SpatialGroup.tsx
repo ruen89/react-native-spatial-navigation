@@ -1,11 +1,13 @@
 /* Dependencies
 ================================================================== */
-import React, { createContext, useContext, useEffect, useRef } from 'react'
+import * as React from 'react'
 
 import { SpatialApi } from './core'
 /* Types
 ================================================================== */
 import { SpatialGroupContextState, SpatialGroupProps, SpatialId } from './types'
+
+const { createContext, useContext, useEffect, useRef } = React
 
 /* Context & Provider
 ================================================================== */

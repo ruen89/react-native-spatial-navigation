@@ -1,9 +1,11 @@
 /* Dependencies
 ================================================================== */
-import React, { useCallback, useContext, useState } from 'react'
+import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import { SpatialApi, SpatialButton, SpatialNavigationGroupContext } from '../'
+
+const { useCallback, useContext, useState } = React
 
 /* Types
 ================================================================== */

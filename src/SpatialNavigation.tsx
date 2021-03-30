@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react'
+import * as React from 'react'
 
 import { SpatialApi } from './core'
 import { SpatialGroup } from './SpatialGroup'
+
+const { useEffect } = React
 
 /* SpatialNavigation
 ================================================================== */

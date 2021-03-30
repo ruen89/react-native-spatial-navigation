@@ -1,6 +1,6 @@
 /* Dependencies
 ================================================================== */
-import React, { memo, useCallback, useContext, useEffect, useRef } from 'react'
+import * as React from 'react'
 import { findNodeHandle, TouchableOpacity } from 'react-native'
 
 import { SpatialApi } from './core'
@@ -8,6 +8,8 @@ import { SpatialNavigationGroupContext } from './SpatialGroup'
 /* Types
 ================================================================== */
 import { SpatialButtonProps, SpatialId } from './types'
+
+const { memo, useCallback, useContext, useEffect, useRef } = React
 
 /* Spatial element (button)
 ================================================================== */

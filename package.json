@@ -50,6 +50,6 @@
     ]
   },
   "dependencies": {
-    "lodash.throttle": "^4.1.1"
+    "lodash.throttle": "*"
   }
 }
