@@ -17,6 +17,7 @@ import {
   SpatialObject,
   SpatialRef,
   SpatialState,
+  UpdateBlurProps,
   UpdateLayoutProps,
 } from './types'
 
@@ -48,6 +49,7 @@ export const defaultState: SpatialState = {
 
 class SpatialNavigationApi {
   private state: SpatialState
+  private blurTimeout: any
 
   constructor() {
     this.state = defaultState
@@ -176,6 +178,7 @@ class SpatialNavigationApi {
    The elements nextfocusProps are calcultated and set through setNativeProps
   */
   updateFocus = ({ id, groupId, ref }: GetNextFocusHandles) => {
+    const prevGroupFocusKey = this.state.groupFocusKey
     const newState: Partial<SpatialState> = {
       focusKey: id,
       groupFocusKey: groupId,
@@ -199,7 +202,45 @@ class SpatialNavigationApi {
 
     this.setState(newState, 'updateFocus')
 
+    if (prevGroupFocusKey !== groupId) {
+      this.updateGroupFocus(groupId, prevGroupFocusKey)
+    }
+
     this.setNextFocusNodeHandles(id, ref)
+  }
+
+  private updateGroupFocus = (
+    currentGroupId: SpatialId | null,
+    prevGroupId: SpatialId | null
+  ) => {
+    clearTimeout(this.blurTimeout)
+    if (prevGroupId) {
+      const prevGroup = this.selectGroupById(prevGroupId)
+      prevGroup?.onBlur()
+    }
+    if (currentGroupId) {
+      const currentGroup = this.selectGroupById(currentGroupId)
+      currentGroup!.onFocus()
+    }
+  }
+
+  updateBlur = ({ id, groupId }: UpdateBlurProps) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.blurTimeout = setTimeout(() => {
+          if (id === this.state.focusKey) {
+            this.updateGroupFocus(null, groupId)
+            this.setState(
+              {
+                focusKey: null,
+                groupFocusKey: null,
+              },
+              'updateBlur'
+            )
+          }
+        }, 1)
+      })
+    })
   }
 
   /*
