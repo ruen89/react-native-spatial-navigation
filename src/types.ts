@@ -89,7 +89,7 @@ export interface SpatialButtonProps extends Partial<NextFocusRestrictions> {
   activeOpacity?: number
   children: React.ReactNode | React.ReactNode[]
   hasTVPreferredFocus?: boolean
-  id: string | number
+  id?: string | number
   onBlur?: () => void
   onFocus?: () => void
   onPress?: () => void

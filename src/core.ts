@@ -279,7 +279,20 @@ class SpatialNavigationApi {
     // Todo: extend logic to also know which (child)group gets
     // prefferedFocus and possibly also track last focus
     if (group && group.groupChildIds.length > 0) {
-      this.setFocusToGroup(group.groupChildIds[0])
+      let groupChildIndex: number
+      if (group.preferredChildFocusIndex) {
+        groupChildIndex = group.preferredChildFocusIndex
+      } else if (group.preferredChildFocusId) {
+        groupChildIndex = Math.max(
+          0,
+          group.groupChildIds.findIndex(
+            (value) => value === group.preferredChildFocusId
+          )
+        )
+      } else {
+        groupChildIndex = 0
+      }
+      this.setFocusToGroup(group.groupChildIds[groupChildIndex])
       return
     }
 
