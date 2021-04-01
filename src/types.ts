@@ -29,6 +29,11 @@ export interface GetNextFocusHandles {
   ref: SpatialRef
 }
 
+export interface UpdateBlurProps {
+  id: SpatialId
+  groupId: SpatialId
+}
+
 export interface SpatialNavigationProps {
   children: React.ReactNode | React.ReactNode[]
   id: SpatialId
@@ -41,9 +46,10 @@ export interface SpatialGroupContextState {
 }
 
 export interface SpatialGroupProps extends Partial<NextFocusGroup> {
-  children: React.ReactNode | React.ReactNode[]
   hasTVPreferredFocus?: boolean
   id: SpatialId
+  onBlur?: () => void
+  onFocus?: () => void
   preferredChildFocusIndex?: number
   preferredChildFocusId?: SpatialId
   shouldTrackChildren?: boolean
@@ -54,6 +60,8 @@ export interface SpatialGroupObject extends NextFocusGroup {
   id: SpatialId
   groupParentId: SpatialId | undefined
   groupChildIds: SpatialId[]
+  onBlur: () => void
+  onFocus: () => void
   preferredChildFocusIndex?: number
   preferredChildFocusId?: SpatialId
   shouldTrackChildren?: boolean
@@ -80,7 +88,7 @@ export interface SpatialLayoutObject {
 export interface SpatialButtonProps extends Partial<NextFocusRestrictions> {
   activeOpacity?: number
   children: React.ReactNode | React.ReactNode[]
-  hasTVPreferredFocus: boolean
+  hasTVPreferredFocus?: boolean
   id: string | number
   onBlur?: () => void
   onFocus?: () => void

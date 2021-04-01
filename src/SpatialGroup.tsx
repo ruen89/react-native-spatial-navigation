@@ -7,7 +7,7 @@ import { SpatialApi } from './core'
 ================================================================== */
 import { SpatialGroupContextState, SpatialGroupProps, SpatialId } from './types'
 
-const { createContext, useContext, useEffect, useRef } = React
+const { createContext, useCallback, useContext, useEffect, useRef } = React
 
 /* Context & Provider
 ================================================================== */
@@ -17,7 +17,7 @@ export const SpatialNavigationGroupContext = createContext<SpatialGroupContextSt
 
 /* SpatialGroup
 ================================================================== */
-export function SpatialGroup(props: SpatialGroupProps) {
+export const SpatialGroup: React.FC<SpatialGroupProps> = (props) => {
   const willMount = useRef<boolean>(true)
   const {
     children,
@@ -27,6 +27,8 @@ export function SpatialGroup(props: SpatialGroupProps) {
     nextFocusDownGroup,
     nextFocusRightGroup,
     nextFocusLeftGroup,
+    onBlur,
+    onFocus,
     preferredChildFocusIndex,
     preferredChildFocusId,
     shouldTrackChildren,
@@ -34,6 +36,18 @@ export function SpatialGroup(props: SpatialGroupProps) {
   const parentGroupContext = useContext(SpatialNavigationGroupContext)
   const { current: groupId } = useRef<SpatialId>(id || `GroupId-${Date.now()}`)
   const unregister = useRef<() => void>()
+
+  const handleBlur = useCallback(() => {
+    if (typeof onBlur === 'function') {
+      onBlur()
+    }
+  }, [onBlur])
+
+  const handleFocus = useCallback(() => {
+    if (typeof onFocus === 'function') {
+      onFocus()
+    }
+  }, [onFocus])
 
   // I needed resemling willMount for this usecase, so implement this solution
   // took inspiration from: https://stackoverflow.com/questions/53464595/how-to-use-componentwillmount-in-react-hooks
@@ -47,6 +61,8 @@ export function SpatialGroup(props: SpatialGroupProps) {
       nextFocusDownGroup,
       nextFocusRightGroup,
       nextFocusLeftGroup,
+      onBlur: handleBlur,
+      onFocus: handleFocus,
       preferredChildFocusIndex,
       preferredChildFocusId,
       shouldTrackChildren,
@@ -54,6 +70,7 @@ export function SpatialGroup(props: SpatialGroupProps) {
   }
 
   useEffect(function onMounted() {
+    willMount.current = false
     return unregister.current
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
