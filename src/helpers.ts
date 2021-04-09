@@ -34,17 +34,20 @@ export function getRect(
 export function getNearestNeighbor(
   focusedElement: SpatialObject,
   collection: SpatialObject[],
-  threshold: number = 0.8
+  threshold: number = 0.8,
+  shouldLogEvents: boolean = false
 ): NextFocusElements {
   const prioritizedSpatialDirection = distributeCollectionSpatially(
     focusedElement,
     collection,
-    threshold
+    threshold,
+    shouldLogEvents
   )
 
   const sortedSpatialDirection = sortSpatialNeighborsByDistance(
     focusedElement,
-    prioritizedSpatialDirection
+    prioritizedSpatialDirection,
+    shouldLogEvents
   )
 
   return {
@@ -106,7 +109,8 @@ function shouldPrioritizeHorizontally(
 function distributeCollectionSpatially(
   focusedElement: SpatialObject,
   collection: SpatialObject[],
-  threshold: number
+  threshold: number,
+  logEvents: boolean = false
 ): PrioritizedSpatialDirection {
   const { id: focusedId, layout: focusedLayout } = focusedElement
   const prioritizedSpatialDirection: PrioritizedSpatialDirection = {
@@ -125,9 +129,11 @@ function distributeCollectionSpatially(
   }
 
   if (!focusedLayout) {
-    console.info(
-      '[WARNING][getNewFocusBukets] - Focused element without layout object'
-    )
+    if (logEvents) {
+      console.info(
+        '[WARNING][getNewFocusBukets] - Focused element without layout object'
+      )
+    }
 
     return prioritizedSpatialDirection
   }
@@ -137,9 +143,11 @@ function distributeCollectionSpatially(
 
     // If layout for this element has not been calculated/returned yet
     if (!elementLayout) {
-      console.info(
-        `[WARNING][distributeCollectionSpatially] - Element found without layout object: ${elementId}`
-      )
+      if (logEvents) {
+        console.info(
+          `[WARNING][distributeCollectionSpatially] - Element found without layout object: ${elementId}`
+        )
+      }
       return
     }
 
@@ -200,15 +208,18 @@ function distributeCollectionSpatially(
 */
 function sortSpatialNeighborsByDistance(
   focusedElement: SpatialObject,
-  prioritizedSpatialCollection: PrioritizedSpatialDirection
+  prioritizedSpatialCollection: PrioritizedSpatialDirection,
+  logEvents: boolean = false
 ): SpatialDirection {
   const { layout: focusedLayout, nextFocusRestrictions } = focusedElement
   const { primary, secondary } = prioritizedSpatialCollection
 
   if (!focusedLayout) {
-    console.info(
-      '[WARNING][sortSpatialNeighborsByDistance] foccusedLayout not found'
-    )
+    if (logEvents) {
+      console.info(
+        '[WARNING][sortSpatialNeighborsByDistance] foccusedLayout not found'
+      )
+    }
     return { up: [], right: [], down: [], left: [] }
   }
 

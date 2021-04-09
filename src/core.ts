@@ -17,24 +17,8 @@ import {
   SpatialObject,
   SpatialRef,
   SpatialState,
-  UpdateBlurProps,
   UpdateLayoutProps,
 } from './types'
-
-// const stateHandler: ProxyHandler<SpatialState> = {
-//   get(target: SpatialState, property: keyof SpatialState) {
-//     //console.log(`Property ${property} has been read`, target);
-//     return target[property]
-//   },
-//   set(
-//     target: SpatialState,
-//     property: keyof SpatialState,
-//     value: SpatialObject[] & SpatialGroupObject[] & SpatialId & number & never
-//   ) {
-//     target[property] = value
-//     return true
-//   },
-// }
 
 /* State
 ================================================================== */
@@ -45,11 +29,11 @@ export const defaultState: SpatialState = {
   groupFocusKey: null,
   nearestNeigborThreshild: 0.3,
   logStateChanges: true,
+  logEvents: false,
 }
 
 class SpatialNavigationApi {
   private state: SpatialState
-  private blurTimeout: any
 
   constructor() {
     this.state = defaultState
@@ -153,7 +137,7 @@ class SpatialNavigationApi {
     )
 
     if (index === -1) {
-      console.info(
+      this.logInfo(
         `[WARNING][updateLayout] - Fatal error, element not found! ${id}, could it have been removed while scrolling?`
       )
       return
@@ -213,34 +197,41 @@ class SpatialNavigationApi {
     currentGroupId: SpatialId | null,
     prevGroupId: SpatialId | null
   ) => {
-    clearTimeout(this.blurTimeout)
     if (prevGroupId) {
       const prevGroup = this.selectGroupById(prevGroupId)
       prevGroup?.onBlur()
     }
     if (currentGroupId) {
       const currentGroup = this.selectGroupById(currentGroupId)
+      this.updateGroupParent(currentGroup!)
+
       currentGroup!.onFocus()
     }
   }
 
-  updateBlur = ({ id, groupId }: UpdateBlurProps) => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        this.blurTimeout = setTimeout(() => {
-          if (id === this.state.focusKey) {
-            this.updateGroupFocus(null, groupId)
-            this.setState(
-              {
-                focusKey: null,
-                groupFocusKey: null,
-              },
-              'updateBlur'
-            )
-          }
-        }, 1)
-      })
-    })
+  updateGroupParent = (childGroup: SpatialGroupObject) => {
+    const parentGroup = this.selectGroupById(childGroup!.groupParentId || '')
+
+    if (parentGroup?.shouldTrackChildren) {
+      const stateUpdate = { groups: [...this.state.groups] }
+      const indexToUpdate = stateUpdate.groups.findIndex(
+        (item) => item.id === parentGroup.id
+      )
+
+      if (indexToUpdate > -1) {
+        stateUpdate.groups[indexToUpdate].lastChildFocusedId = childGroup.id
+
+        this.setState(stateUpdate, 'updateGroupLastFocused')
+
+        const granParentGroup = this.selectGroupById(
+          parentGroup.groupParentId || ''
+        )
+
+        if (granParentGroup?.shouldTrackChildren) {
+          this.updateGroupParent(parentGroup)
+        }
+      }
+    }
   }
 
   /*
@@ -249,14 +240,14 @@ class SpatialNavigationApi {
   */
   setFocusToElement = (id: SpatialId) => {
     if (!id) {
-      console.info('[WARNING][setFocusToElement] - No id or index provided')
+      this.logInfo('[WARNING][setFocusToElement] - No id or index provided')
       return
     }
 
     const element = this.selectItemById(id)
 
     if (!element) {
-      console.info('[WARNING][setElementFocus] - Element not found')
+      this.logInfo('[WARNING][setElementFocus] - Element not found')
       return
     }
 
@@ -271,16 +262,23 @@ class SpatialNavigationApi {
   */
   setFocusToGroup = (groupId: SpatialId) => {
     if (!groupId) {
-      console.info('[WARNING][setFocusToGroup] - No id provided')
+      this.logInfo('[WARNING][setFocusToGroup] - No id provided')
       return
     }
     const group = this.selectGroupById(groupId)
 
-    // Todo: extend logic to also know which (child)group gets
-    // prefferedFocus and possibly also track last focus
+    // If group has child groups, then find out which of the child
+    // groups will get the focus
     if (group && group.groupChildIds.length > 0) {
       let groupChildIndex: number
-      if (group.preferredChildFocusIndex) {
+      if (group.shouldTrackChildren && group.lastChildFocusedId) {
+        groupChildIndex = Math.max(
+          0,
+          group.groupChildIds.findIndex(
+            (value) => value === group.lastChildFocusedId
+          )
+        )
+      } else if (group.preferredChildFocusIndex) {
         groupChildIndex = group.preferredChildFocusIndex
       } else if (group.preferredChildFocusId) {
         groupChildIndex = Math.max(
@@ -302,7 +300,7 @@ class SpatialNavigationApi {
       const groupChildren = this.selectAllItemsFromGroup(groupId)
 
       if (groupChildren.length === 0) {
-        console.info('[WARNING][setFocusToGroup] - Children not found')
+        this.logInfo('[WARNING][setFocusToGroup] - Children not found')
         return
       }
 
@@ -318,12 +316,12 @@ class SpatialNavigationApi {
   */
   recalculateGroupLayout = (groupId: SpatialId) => {
     if (!groupId) {
-      console.info('[WARNING][recalculateGroupLayout] No id passed')
+      this.logInfo('[WARNING][recalculateGroupLayout] No id passed')
       return
     }
     const group = this.selectGroupById(groupId)
     if (!group) {
-      console.info(
+      this.logInfo(
         '[WARNING][recalculateGroupLayout] - Group not found with id',
         groupId
       )
@@ -357,13 +355,14 @@ class SpatialNavigationApi {
   ): SpatialObject | undefined => {
     const groups = this.selectGroupById(groupId)
     if (!groups) {
-      console.info(
+      this.logInfo(
         `[WARNING][getGroupPrefferedFocusSpatialObject] - Group not found with id ${groupId}`
       )
       return
     }
 
     const {
+      groupChildIds,
       preferredChildFocusId,
       preferredChildFocusIndex,
       shouldTrackChildren,
@@ -371,13 +370,22 @@ class SpatialNavigationApi {
     } = groups
     const groupChildren = this.selectAllItemsFromGroup(groupId)
 
-    if (shouldTrackChildren && lastChildFocusedId) {
+    if (groupChildIds.length > 0) {
+      let lasFocusedChildId = groupChildIds[0]
+      if (shouldTrackChildren && lastChildFocusedId) {
+        lasFocusedChildId = groupChildIds.find(
+          (value) => value === lastChildFocusedId
+        )!
+      }
+
+      return this.getGroupPrefferedSpatialObjectOnFocus(lasFocusedChildId!)
+    } else if (shouldTrackChildren && lastChildFocusedId) {
       const lasFocusedChild = groupChildren.find(
         (element) => element.id === lastChildFocusedId
       )
 
       if (!lasFocusedChild) {
-        console.info(
+        this.logInfo(
           '[WARNING][getGroupPrefferedFocusSpatialObject] - No lasFocusedChild found with this id'
         )
         return
@@ -390,7 +398,7 @@ class SpatialNavigationApi {
       )
 
       if (!findElement) {
-        console.info(
+        this.logInfo(
           '[WARNING][getGroupPrefferedFocusSpatialObject] - No element found with this id'
         )
         return
@@ -465,7 +473,7 @@ class SpatialNavigationApi {
       requestAnimationFrame(() => {
         const focusedElement = this.selectItemById(id)
         if (!focusedElement) {
-          console.error(
+          this.logError(
             `[setNextFocusNodeHandles] - No focused element found with this id: ${id}`
           )
           // todo: type this beter
@@ -477,7 +485,8 @@ class SpatialNavigationApi {
         const nextFocusSpatialObjects = getNearestNeighbor(
           focusedElement,
           this.state.collection,
-          this.state.nearestNeigborThreshild
+          this.state.nearestNeigborThreshild,
+          this.state.logEvents
         )
 
         // If the next focused element belongs to another group
@@ -532,7 +541,7 @@ class SpatialNavigationApi {
           nextFocusLeft: (nextFocusLeft || focusedElement).nodehandle,
         })
 
-        console.log(
+        this.log(
           'NextFocus to:',
           JSON.stringify(
             {
@@ -557,6 +566,24 @@ class SpatialNavigationApi {
 
     if (this.state.logStateChanges) {
       console.log(`Action: ${action}`, newState)
+    }
+  }
+
+  private log = (...args: any[]) => {
+    if (this.state.logEvents) {
+      console.log(...args)
+    }
+  }
+
+  private logInfo = (...args: any[]) => {
+    if (this.state.logEvents) {
+      console.info(...args)
+    }
+  }
+
+  private logError = (...args: any[]) => {
+    if (this.state.logEvents) {
+      console.error(...args)
     }
   }
 }

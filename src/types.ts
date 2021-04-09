@@ -7,6 +7,7 @@ export interface SpatialState {
   groupFocusKey: SpatialId | null
   nearestNeigborThreshild: number
   logStateChanges: boolean
+  logEvents: boolean
 }
 
 export type SpatialId = string | number

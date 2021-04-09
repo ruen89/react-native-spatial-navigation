@@ -31,7 +31,7 @@ export const SpatialButton: React.FC<SpatialButtonProps> = memo((props) => {
   const { groupId, preferredChildFocusId } = useContext(
     SpatialNavigationGroupContext
   )
-  const { updateBlur, updateFocus, register, updateLayout } = SpatialApi
+  const { updateFocus, register, updateLayout } = SpatialApi
   const elementRef = useRef<TouchableOpacity>(null)
   const { current: elementId } = useRef<SpatialId>(
     id || `${groupId}_SpatialId-${Date.now()}`
@@ -63,12 +63,10 @@ export const SpatialButton: React.FC<SpatialButtonProps> = memo((props) => {
   }, [elementId, updateFocus, groupId, onFocus])
 
   const handleBlur = useCallback(() => {
-    console.log('BLURRRRR', elementId)
-    // updateBlur({ id: elementId, groupId })
     if (typeof onBlur === 'function') {
       onBlur()
     }
-  }, [elementId, groupId, onBlur])
+  }, [onBlur])
 
   const handleLayout = useCallback(() => {
     elementRef.current!.measure((fx, fy, width, height, px, py) => {
