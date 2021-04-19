@@ -27,7 +27,7 @@ export const defaultState: SpatialState = {
   collection: [],
   focusKey: null,
   groupFocusKey: null,
-  nearestNeigborThreshild: 0.3,
+  nearestNeigborThreshold: 0.3,
   logStateChanges: true,
   logEvents: false,
 }
@@ -406,7 +406,7 @@ class SpatialNavigationApi {
 
       return findElement
     } else if (
-      preferredChildFocusIndex &&
+      preferredChildFocusIndex != null &&
       preferredChildFocusIndex <= groupChildren.length - 1
     ) {
       return groupChildren[preferredChildFocusIndex]
@@ -485,7 +485,7 @@ class SpatialNavigationApi {
         const nextFocusSpatialObjects = getNearestNeighbor(
           focusedElement,
           this.state.collection,
-          this.state.nearestNeigborThreshild,
+          this.state.nearestNeigborThreshold,
           this.state.logEvents
         )
 

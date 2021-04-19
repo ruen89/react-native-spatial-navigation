@@ -1,11 +1,16 @@
-import { StyleProp, TouchableOpacity, ViewStyle } from 'react-native'
+import {
+  StyleProp,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  ViewStyle,
+} from 'react-native'
 
 export interface SpatialState {
   groups: SpatialGroupObject[]
   collection: SpatialObject[]
   focusKey: SpatialId | null
   groupFocusKey: SpatialId | null
-  nearestNeigborThreshild: number
+  nearestNeigborThreshold: number
   logStateChanges: boolean
   logEvents: boolean
 }
@@ -86,7 +91,9 @@ export interface SpatialLayoutObject {
   y1: number
 }
 
-export interface SpatialButtonProps extends Partial<NextFocusRestrictions> {
+export interface SpatialButtonProps
+  extends TouchableOpacityProps,
+    Partial<NextFocusRestrictions> {
   activeOpacity?: number
   children: React.ReactNode | React.ReactNode[]
   hasTVPreferredFocus?: boolean
