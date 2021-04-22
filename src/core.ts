@@ -28,7 +28,7 @@ export const defaultState: SpatialState = {
   focusKey: null,
   groupFocusKey: null,
   nearestNeigborThreshold: 0.3,
-  logStateChanges: true,
+  logStateChanges: false,
   logEvents: false,
 }
 
@@ -116,12 +116,20 @@ class SpatialNavigationApi {
   */
   remove = (elementId: SpatialId) => {
     const collection = [...this.state.collection]
+    const focusKey = this.state.focusKey
     const indexToRemove = collection.findIndex(({ id }: SpatialObject) => {
       return id === elementId
     })
     collection.splice(indexToRemove, 1)
 
-    this.setState({ collection }, 'remove')
+    const newState: Partial<SpatialState> = { collection }
+
+    if (focusKey === elementId) {
+      newState.focusKey = null
+      newState.groupFocusKey = null
+    }
+
+    this.setState(newState, 'remove')
   }
 
   /*

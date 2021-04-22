@@ -48,7 +48,6 @@ export interface SpatialNavigationProps {
 export interface SpatialGroupContextState {
   groupId: SpatialId
   isFocused: boolean
-  preferredChildFocusId?: SpatialId
 }
 
 export interface SpatialGroupProps extends Partial<NextFocusGroup> {
