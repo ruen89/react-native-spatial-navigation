@@ -71,6 +71,9 @@ export const SpatialGroup: React.FC<SpatialGroupProps> = (props) => {
 
   useEffect(function onMounted() {
     willMount.current = false
+    if (hasTVPreferredFocus) {
+      SpatialApi.setFocusToGroup(groupId)
+    }
     return unregister.current
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -80,7 +83,6 @@ export const SpatialGroup: React.FC<SpatialGroupProps> = (props) => {
       value={{
         groupId,
         isFocused: false,
-        ...(hasTVPreferredFocus ? { preferredChildFocusId } : {}),
       }}
     >
       {children}

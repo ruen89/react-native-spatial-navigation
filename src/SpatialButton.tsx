@@ -28,9 +28,7 @@ export const SpatialButton: React.FC<SpatialButtonProps> = memo((props) => {
     onlyPrimaryLeft = false,
     style,
   } = props
-  const { groupId, preferredChildFocusId } = useContext(
-    SpatialNavigationGroupContext
-  )
+  const { groupId } = useContext(SpatialNavigationGroupContext)
   const { updateFocus, register, updateLayout } = SpatialApi
   const elementRef = useRef<TouchableOpacity>(null)
   const { current: elementId } = useRef<SpatialId>(
@@ -78,9 +76,7 @@ export const SpatialButton: React.FC<SpatialButtonProps> = memo((props) => {
   return (
     <TouchableOpacity
       activeOpacity={activeOpacity || 1}
-      hasTVPreferredFocus={
-        hasTVPreferredFocus || preferredChildFocusId === elementId
-      }
+      hasTVPreferredFocus={hasTVPreferredFocus}
       onBlur={handleBlur}
       onFocus={handleFocus}
       onLayout={handleLayout}
