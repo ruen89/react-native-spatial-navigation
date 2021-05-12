@@ -7,7 +7,7 @@ const { useEffect } = React
 
 /* SpatialNavigation
 ================================================================== */
-export function SpatialNavigation({
+export function SpatialNavigationProvider({
   children,
 }: {
   children: React.ReactNode | React.ReactNode[]
