@@ -125,10 +125,10 @@ export interface NextFocusProps {
 }
 
 export interface NextFocusRestrictions {
-  onlyPrimaryTop: boolean
-  onlyPrimaryRight: boolean
-  onlyPrimaryDown: boolean
-  onlyPrimaryLeft: boolean
+  disableSecondaryUp: boolean
+  disableSecondaryRight: boolean
+  disableSecondaryDown: boolean
+  disableSecondaryLeft: boolean
 }
 
 export interface RegisterProps {

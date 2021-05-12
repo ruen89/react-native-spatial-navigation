@@ -22,10 +22,10 @@ export const SpatialButton: React.FC<SpatialButtonProps> = memo((props) => {
     onBlur,
     onFocus,
     onPress,
-    onlyPrimaryTop = false,
-    onlyPrimaryRight = false,
-    onlyPrimaryDown = false,
-    onlyPrimaryLeft = false,
+    disableSecondaryUp = false,
+    disableSecondaryRight = false,
+    disableSecondaryDown = false,
+    disableSecondaryLeft = false,
     style,
   } = props
   const { groupId } = useContext(SpatialNavigationGroupContext)
@@ -42,10 +42,10 @@ export const SpatialButton: React.FC<SpatialButtonProps> = memo((props) => {
       groupId,
       nodehandle: findNodeHandle(elementRef.current),
       nextFocusRestrictions: {
-        onlyPrimaryTop,
-        onlyPrimaryRight,
-        onlyPrimaryDown,
-        onlyPrimaryLeft,
+        disableSecondaryUp,
+        disableSecondaryRight,
+        disableSecondaryDown,
+        disableSecondaryLeft,
       },
     })
 

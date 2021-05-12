@@ -228,25 +228,25 @@ function sortSpatialNeighborsByDistance(
       focusedLayout,
       primary.up,
       secondary.up,
-      nextFocusRestrictions.onlyPrimaryTop
+      nextFocusRestrictions.disableSecondaryUp
     ),
     right: sortRightSpatialObjects(
       focusedLayout,
       primary.right,
       secondary.right,
-      nextFocusRestrictions.onlyPrimaryRight
+      nextFocusRestrictions.disableSecondaryRight
     ),
     down: sortDownSpatialObjects(
       focusedLayout,
       primary.down,
       secondary.down,
-      nextFocusRestrictions.onlyPrimaryDown
+      nextFocusRestrictions.disableSecondaryDown
     ),
     left: sortLeftSpatialObjects(
       focusedLayout,
       primary.left,
       secondary.left,
-      nextFocusRestrictions.onlyPrimaryLeft
+      nextFocusRestrictions.disableSecondaryLeft
     ),
   }
 
