@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import { SpatialApi, SpatialGroup, SpatialNavigation } from '../'
+import { SpatialApi, SpatialGroup, SpatialNavigationProvider } from '../'
 import Box from './Box'
 
 const groups = [
@@ -64,7 +64,7 @@ const colors = [
 
 export function ExampleGroupLayout() {
   return (
-    <SpatialNavigation>
+    <SpatialNavigationProvider>
       <View style={styles.root}>
         {groups.map(({ data, groupProps, onPress }, index) => {
           return (
@@ -96,7 +96,7 @@ export function ExampleGroupLayout() {
           )
         })}
       </View>
-    </SpatialNavigation>
+    </SpatialNavigationProvider>
   )
 }
 

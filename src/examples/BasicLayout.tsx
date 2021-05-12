@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import { SpatialNavigation } from '../'
+import { SpatialNavigationProvider } from '../'
 /* Components
 ================================================================== */
 import Box from './Box'
@@ -17,7 +17,7 @@ const data = [
 
 export function ExampleBasicLayout() {
   return (
-    <SpatialNavigation>
+    <SpatialNavigationProvider>
       <View style={styles.root}>
         {data.map((row, i) => {
           return (
@@ -37,7 +37,7 @@ export function ExampleBasicLayout() {
           )
         })}
       </View>
-    </SpatialNavigation>
+    </SpatialNavigationProvider>
   )
 }
 
