@@ -66,6 +66,7 @@ export const SpatialGroup: React.FC<SpatialGroupProps> = (props) => {
       preferredChildFocusIndex,
       preferredChildFocusId,
       shouldTrackChildren,
+      spatialChildIds: [],
     })
   }
 

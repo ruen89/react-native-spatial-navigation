@@ -4,6 +4,7 @@ import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { SpatialNavigationProvider } from '../'
+
 /* Components
 ================================================================== */
 import Box from './Box'
@@ -44,7 +45,7 @@ export function ExampleBasicLayout() {
 const styles = StyleSheet.create({
   root: {
     alignItems: 'center',
-    backgroundColor: '#4e6377',
+    backgroundColor: '#1e5e9b',
     flexDirection: 'column',
     justifyContent: 'center',
     flex: 1,
@@ -52,6 +53,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    marginVertical: 20,
+    marginVertical: 10,
   },
 })

@@ -60,14 +60,14 @@ export default function ({
 
 const styles = StyleSheet.create({
   boxRoot: {
-    marginHorizontal: 20,
+    marginHorizontal: 10,
   },
   boxContent: {
     alignItems: 'center',
     backgroundColor: 'rgba(250,250, 250, 0.6)',
-    height: 150,
+    height: 75,
     justifyContent: 'center',
-    width: 150,
+    width: 75,
   },
   focus: {
     backgroundColor: 'rgba(0,0,0, 0.2)',

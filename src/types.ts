@@ -6,8 +6,8 @@ import {
 } from 'react-native'
 
 export interface SpatialState {
-  groups: SpatialGroupObject[]
-  collection: SpatialObject[]
+  groups: { [groupId: string]: SpatialGroupObject }
+  collection: { [spatialId: string]: SpatialObject }
   focusKey: SpatialId | null
   groupFocusKey: SpatialId | null
   nearestNeigborThreshold: number
@@ -70,6 +70,7 @@ export interface SpatialGroupObject extends NextFocusGroup {
   preferredChildFocusIndex?: number
   preferredChildFocusId?: SpatialId
   shouldTrackChildren?: boolean
+  spatialChildIds: SpatialId[]
 }
 
 export interface SpatialObject {
