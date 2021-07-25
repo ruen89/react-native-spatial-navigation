@@ -2,7 +2,7 @@
   "name": "react-native-spatial-navigation",
   "version": "1.1.0",
   "description": " ",
-  "main": "src/index.ts",
+  "main": "lib/index.ts",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
   "react-native": "src/index",
