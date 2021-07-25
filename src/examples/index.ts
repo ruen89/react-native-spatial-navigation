@@ -1,2 +1,2 @@
-export * from './BasicLayout'
-export * from './GroupLayout'
+export * from './BasicLayout';
+export * from './GroupLayout';

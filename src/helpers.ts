@@ -1,13 +1,13 @@
 /* Dependencies
 ================================================================== */
-import {
+import type {
   NextFocusElements,
   PrioritizedSpatialDirection,
-  SpatialDirection,
+  SpatialDirection2,
   SpatialLayoutObject,
   SpatialObject,
   UpdateLayoutProps,
-} from './types'
+} from './types';
 
 /*
  Return an object with the x0,x1,y0 & y1 coordinates and dimension of element
@@ -15,7 +15,7 @@ import {
 export function getRect(
   props: Omit<UpdateLayoutProps, 'id'>
 ): SpatialLayoutObject {
-  const { height, width, x, y } = props
+  const { height, width, x, y } = props;
   return {
     height,
     width,
@@ -23,7 +23,7 @@ export function getRect(
     x1: x + width,
     y0: y,
     y1: y + height,
-  }
+  };
 }
 
 /*
@@ -42,20 +42,20 @@ export function getNearestNeighbor(
     collection,
     threshold,
     shouldLogEvents
-  )
+  );
 
-  const sortedSpatialDirection = sortSpatialNeighborsByDistance(
+  const nearestNeighbor = calculateNearestNeighbor(
     focusedElement,
     prioritizedSpatialDirection,
     shouldLogEvents
-  )
+  );
 
   return {
-    nextFocusUp: sortedSpatialDirection.up[0],
-    nextFocusRight: sortedSpatialDirection.right[0],
-    nextFocusDown: sortedSpatialDirection.down[0],
-    nextFocusLeft: sortedSpatialDirection.left[0],
-  }
+    nextFocusUp: nearestNeighbor.up,
+    nextFocusRight: nearestNeighbor.right,
+    nextFocusDown: nearestNeighbor.down,
+    nextFocusLeft: nearestNeighbor.left,
+  };
 }
 
 /*
@@ -68,16 +68,17 @@ function shouldPrioritizeVertically(
   threshold: number
 ): boolean {
   const isInside =
-    elementLayout.x0 >= focusedLayout.x1 && elementLayout.x1 <= focusedLayout.x1
+    elementLayout.x0 >= focusedLayout.x1 &&
+    elementLayout.x1 <= focusedLayout.x1;
 
   const isMoreThanThreshold =
     elementLayout.x0 < focusedLayout.x1 &&
     elementLayout.x1 > focusedLayout.x0 &&
     Math.max(elementLayout.x0, focusedLayout.x0) +
       Math.min(elementLayout.x1, focusedLayout.x1) >=
-      focusedLayout.x0 + focusedLayout.x1 * threshold
+      focusedLayout.x0 + focusedLayout.x1 * threshold;
 
-  return isInside || isMoreThanThreshold
+  return isInside || isMoreThanThreshold;
 }
 
 /*
@@ -90,16 +91,17 @@ function shouldPrioritizeHorizontally(
   threshold: number
 ): boolean {
   const isInside =
-    elementLayout.y0 >= focusedLayout.y1 && elementLayout.y1 <= focusedLayout.y1
+    elementLayout.y0 >= focusedLayout.y1 &&
+    elementLayout.y1 <= focusedLayout.y1;
 
   const isMoreThanThreshold =
     elementLayout.y0 < focusedLayout.y1 &&
     elementLayout.y1 > focusedLayout.y0 &&
     Math.max(elementLayout.y0, focusedLayout.y0) +
       Math.min(elementLayout.y1, focusedLayout.y1) >=
-      focusedLayout.y0 + focusedLayout.y1 * threshold
+      focusedLayout.y0 + focusedLayout.y1 * threshold;
 
-  return isInside || isMoreThanThreshold
+  return isInside || isMoreThanThreshold;
 }
 
 /*
@@ -112,7 +114,7 @@ function distributeCollectionSpatially(
   threshold: number,
   logEvents: boolean = false
 ): PrioritizedSpatialDirection {
-  const { id: focusedId, layout: focusedLayout } = focusedElement
+  const { id: focusedId, layout: focusedLayout } = focusedElement;
   const prioritizedSpatialDirection: PrioritizedSpatialDirection = {
     primary: {
       up: [],
@@ -126,47 +128,47 @@ function distributeCollectionSpatially(
       down: [],
       left: [],
     },
-  }
+  };
 
   if (!focusedLayout) {
     if (logEvents) {
       console.info(
         '[WARNING][getNewFocusBukets] - Focused element without layout object'
-      )
+      );
     }
 
-    return prioritizedSpatialDirection
+    return prioritizedSpatialDirection;
   }
 
   collection.forEach((element) => {
-    const { id: elementId, layout: elementLayout } = element
+    const { id: elementId, layout: elementLayout } = element;
 
     // If layout for this element has not been calculated/returned yet
     if (!elementLayout) {
       if (logEvents) {
         console.info(
           `[WARNING][distributeCollectionSpatially] - Element found without layout object: ${elementId}`
-        )
+        );
       }
-      return
+      return;
     }
 
     // If it's the same as the focused element
     if (elementId === focusedId) {
-      return
+      return;
     }
 
     // Define general position
-    const isTop = elementLayout.y1 <= focusedLayout.y0
-    const isRight = elementLayout.x0 >= focusedLayout.x1
-    const isBottom = elementLayout.y0 >= focusedLayout.y1
-    const isLeft = elementLayout.x1 <= focusedLayout.x0
+    const isTop = elementLayout.y1 <= focusedLayout.y0;
+    const isRight = elementLayout.x0 >= focusedLayout.x1;
+    const isBottom = elementLayout.y0 >= focusedLayout.y1;
+    const isLeft = elementLayout.x1 <= focusedLayout.x0;
 
     if (isTop) {
       if (shouldPrioritizeVertically(focusedLayout, elementLayout, threshold)) {
-        prioritizedSpatialDirection.primary.up.push(element)
+        prioritizedSpatialDirection.primary.up.push(element);
       } else {
-        prioritizedSpatialDirection.secondary.up.push(element)
+        prioritizedSpatialDirection.secondary.up.push(element);
       }
     }
 
@@ -174,17 +176,17 @@ function distributeCollectionSpatially(
       if (
         shouldPrioritizeHorizontally(focusedLayout, elementLayout, threshold)
       ) {
-        prioritizedSpatialDirection.primary.right.push(element)
+        prioritizedSpatialDirection.primary.right.push(element);
       } else {
-        prioritizedSpatialDirection.secondary.right.push(element)
+        prioritizedSpatialDirection.secondary.right.push(element);
       }
     }
 
     if (isBottom) {
       if (shouldPrioritizeVertically(focusedLayout, elementLayout, threshold)) {
-        prioritizedSpatialDirection.primary.down.push(element)
+        prioritizedSpatialDirection.primary.down.push(element);
       } else {
-        prioritizedSpatialDirection.secondary.down.push(element)
+        prioritizedSpatialDirection.secondary.down.push(element);
       }
     }
 
@@ -192,197 +194,244 @@ function distributeCollectionSpatially(
       if (
         shouldPrioritizeHorizontally(focusedLayout, elementLayout, threshold)
       ) {
-        prioritizedSpatialDirection.primary.left.push(element)
+        prioritizedSpatialDirection.primary.left.push(element);
       } else {
-        prioritizedSpatialDirection.secondary.left.push(element)
+        prioritizedSpatialDirection.secondary.left.push(element);
       }
     }
-  })
+  });
 
-  return prioritizedSpatialDirection
+  return prioritizedSpatialDirection;
 }
 
-/*
-  Pass prioritizedSpatialCollection through a sorting function to sort it based on
-  their distanced to focused element
-*/
-function sortSpatialNeighborsByDistance(
+function calculateNearestNeighbor(
   focusedElement: SpatialObject,
   prioritizedSpatialCollection: PrioritizedSpatialDirection,
   logEvents: boolean = false
-): SpatialDirection {
-  const { layout: focusedLayout, nextFocusRestrictions } = focusedElement
-  const { primary, secondary } = prioritizedSpatialCollection
+): SpatialDirection2 {
+  const { layout: focusedLayout, nextFocusRestrictions } = focusedElement;
+  const { primary, secondary } = prioritizedSpatialCollection;
 
   if (!focusedLayout) {
     if (logEvents) {
       console.info(
         '[WARNING][sortSpatialNeighborsByDistance] foccusedLayout not found'
-      )
+      );
     }
-    return { up: [], right: [], down: [], left: [] }
+    return {
+      up: undefined,
+      right: undefined,
+      down: undefined,
+      left: undefined,
+    };
   }
 
   const sortedNeighbors = {
-    up: sortUpSpatialObjects(
+    up: getNearestUpNeighBor(
       focusedLayout,
       primary.up,
       secondary.up,
       nextFocusRestrictions.disableSecondaryUp
     ),
-    right: sortRightSpatialObjects(
+    right: getNearestRightNeighBor(
       focusedLayout,
       primary.right,
       secondary.right,
       nextFocusRestrictions.disableSecondaryRight
     ),
-    down: sortDownSpatialObjects(
+    down: getNearestDownNeighBor(
       focusedLayout,
       primary.down,
       secondary.down,
       nextFocusRestrictions.disableSecondaryDown
     ),
-    left: sortLeftSpatialObjects(
+    left: getNearestLeftNeighBor(
       focusedLayout,
       primary.left,
       secondary.left,
       nextFocusRestrictions.disableSecondaryLeft
     ),
-  }
+  };
 
-  return sortedNeighbors
+  return sortedNeighbors;
 }
 
-/*
-  Sort the elements above the focused element based on their distance
-  to focused element. Priority takes precedence. If there's no primary candidates
-  sort the secondary collection.
-*/
-function sortUpSpatialObjects(
+function getNearestUpNeighBor(
   focusedLayout: SpatialLayoutObject,
   primary: SpatialObject[],
   secondary: SpatialObject[],
   onlyPrimary: boolean
-): SpatialObject[] {
+): SpatialObject | undefined {
+  let nearestUp: SpatialObject | undefined;
   if (primary.length > 0 || onlyPrimary) {
-    return primary.slice().sort((el1: SpatialObject, el2: SpatialObject) => {
-      return el2.layout!.y1 - el1.layout!.y1
-    })
+    primary.forEach((el) => {
+      if (!nearestUp || el.layout!.y1 - nearestUp.layout!.y1 > 0) {
+        nearestUp = el;
+      }
+    });
+
+    return nearestUp;
   }
 
-  return secondary.slice().sort((el1: SpatialObject, el2: SpatialObject) => {
-    const isEl1Left = el1.layout!.x0 <= focusedLayout!.x0
-    const isEL2Left = el2.layout!.x0 <= focusedLayout!.x0
+  secondary.forEach((el) => {
+    if (!nearestUp) {
+      nearestUp = el;
+      return;
+    }
+
+    const isEl1Left = nearestUp.layout!.x0 <= focusedLayout!.x0;
+    const isEL2Left = el.layout!.x0 <= focusedLayout!.x0;
 
     const el1DistanceX = isEl1Left
-      ? Math.abs(focusedLayout!.x0 - el1.layout!.x1)
-      : Math.abs(el1.layout!.x0 - focusedLayout!.x1)
-    const el2DistanceX = isEL2Left
-      ? focusedLayout!.x0 - el2.layout!.x1
-      : el2.layout!.x0 - focusedLayout!.x1
+      ? Math.abs(focusedLayout!.x0 - nearestUp.layout!.x1)
+      : Math.abs(nearestUp.layout!.x0 - focusedLayout!.x1);
 
-    return el1DistanceX - el2DistanceX || el2.layout!.y1 - el1.layout!.y1
-  })
+    const el2DistanceX = isEL2Left
+      ? focusedLayout!.x0 - el.layout!.x1
+      : el.layout!.x0 - focusedLayout!.x1;
+
+    if (
+      el1DistanceX - el2DistanceX > 0 ||
+      el.layout!.y1 - nearestUp.layout!.y1 > 0
+    ) {
+      nearestUp = el;
+    }
+  });
+
+  return nearestUp;
 }
 
-/*
-  Sort the elements to the right of the focused element based on their distance
-  to focused element. Priority takes precedence. If there's no primary candidates
-  sort the secondary collection.
-*/
-function sortRightSpatialObjects(
+function getNearestRightNeighBor(
   focusedLayout: SpatialLayoutObject,
   primary: SpatialObject[],
   secondary: SpatialObject[],
   onlyPrimary: boolean
-): SpatialObject[] {
+): SpatialObject | undefined {
+  let nearestRight: SpatialObject | undefined;
   if (primary.length > 0 || onlyPrimary) {
-    return primary.slice().sort((el1: SpatialObject, el2: SpatialObject) => {
-      return el2.layout!.x0 + el1.layout!.x0
-    })
+    primary.forEach((el) => {
+      if (!nearestRight || nearestRight.layout!.x0 - el.layout!.x0 > 0) {
+        nearestRight = el;
+      }
+    });
+
+    return nearestRight;
   }
 
-  return secondary.slice().sort((el1: SpatialObject, el2: SpatialObject) => {
-    const isEl1Above = el1.layout!.y0 <= focusedLayout!.y0
-    const isEL2Above = el2.layout!.y0 <= focusedLayout!.y0
+  secondary.forEach((el) => {
+    if (!nearestRight) {
+      nearestRight = el;
+      return;
+    }
+
+    const isEl1Above = nearestRight.layout!.y0 <= focusedLayout!.y0;
+    const isEL2Above = el.layout!.y0 <= focusedLayout!.y0;
 
     const el1Distance = isEl1Above
-      ? focusedLayout!.y0 - el1.layout!.y1
-      : el1.layout!.y0 - focusedLayout!.y1
-    const el2Distance = isEL2Above
-      ? focusedLayout!.y0 - el2.layout!.y1
-      : el2.layout!.y0 - focusedLayout!.y1
+      ? focusedLayout!.y0 - nearestRight.layout!.y1
+      : nearestRight.layout!.y0 - focusedLayout!.y1;
 
-    return (
-      el1Distance - el2Distance ||
-      el1.layout!.x0 - focusedLayout.x1 - (el2.layout!.x0 - focusedLayout.x0)
-    )
-  })
+    const el2Distance = isEL2Above
+      ? focusedLayout!.y0 - el.layout!.y1
+      : el.layout!.y0 - focusedLayout!.y1;
+
+    if (
+      el1Distance - el2Distance > 0 ||
+      nearestRight.layout!.y1 - el.layout!.y1 > 0
+    ) {
+      nearestRight = el;
+    }
+  });
+
+  return nearestRight;
 }
 
-/*
-  Sort the elements beneath of the focused element based on their distance
-  to focused element. Priority takes precedence. If there's no primary candidates
-  sort the secondary collection.
-*/
-function sortDownSpatialObjects(
+function getNearestDownNeighBor(
   focusedLayout: SpatialLayoutObject,
   primary: SpatialObject[],
   secondary: SpatialObject[],
   onlyPrimary: boolean
-): SpatialObject[] {
+): SpatialObject | undefined {
+  let nearestDown: SpatialObject | undefined;
   if (primary.length > 0 || onlyPrimary) {
-    return primary.slice().sort((el1: SpatialObject, el2: SpatialObject) => {
-      return el1.layout!.y0 + el2.layout!.y0
-    })
+    primary.forEach((el) => {
+      if (!nearestDown || nearestDown.layout!.y0 - el.layout!.y0 > 0) {
+        nearestDown = el;
+      }
+    });
+
+    return nearestDown;
   }
 
-  return secondary.slice().sort((el1: SpatialObject, el2: SpatialObject) => {
-    const isEl1Left = el1.layout!.x0 <= focusedLayout!.x0
-    const isEL2Left = el2.layout!.x0 <= focusedLayout!.x0
+  secondary.forEach((el) => {
+    if (!nearestDown) {
+      nearestDown = el;
+      return;
+    }
+
+    const isEl1Left = nearestDown.layout!.x0 <= focusedLayout!.x0;
+    const isEL2Left = el.layout!.x0 <= focusedLayout!.x0;
 
     const el1DistanceX = isEl1Left
-      ? focusedLayout!.x0 - el1.layout!.x1
-      : el1.layout!.x0 - focusedLayout!.x1
-    const el2DistanceX = isEL2Left
-      ? focusedLayout!.x0 - el2.layout!.x1
-      : el2.layout!.x0 - focusedLayout!.x1
+      ? focusedLayout!.x0 - nearestDown.layout!.x1
+      : nearestDown.layout!.x0 - focusedLayout!.x1;
 
-    return el1DistanceX - el2DistanceX || el1.layout!.y0 + el2.layout!.y0
-  })
+    const el2DistanceX = isEL2Left
+      ? focusedLayout!.x0 - el.layout!.x1
+      : el.layout!.x0 - focusedLayout!.x1;
+
+    if (
+      el1DistanceX - el2DistanceX > 0 ||
+      nearestDown.layout!.y0 - el.layout!.y0 > 0
+    ) {
+      nearestDown = el;
+    }
+  });
+
+  return nearestDown;
 }
 
-/*
-  Sort the elements to the left of the focused element based on their distance
-  to focused element. Priority takes precedence. If there's no primary candidates
-  sort the secondary collection.
-*/
-function sortLeftSpatialObjects(
+function getNearestLeftNeighBor(
   focusedLayout: SpatialLayoutObject,
   primary: SpatialObject[],
   secondary: SpatialObject[],
   onlyPrimary: boolean
-): SpatialObject[] {
+): SpatialObject | undefined {
+  let nearestLeft: SpatialObject | undefined;
   if (primary.length > 0 || onlyPrimary) {
-    return primary.slice().sort((el1: SpatialObject, el2: SpatialObject) => {
-      return el2.layout!.x1 - el1.layout!.x1
-    })
+    primary.forEach((el) => {
+      if (!nearestLeft || el.layout!.x1 - nearestLeft.layout!.x1 > 0) {
+        nearestLeft = el;
+      }
+    });
+
+    return nearestLeft;
   }
 
-  return secondary.slice().sort((el1: SpatialObject, el2: SpatialObject) => {
-    const isEl1Above = el1.layout!.y0 <= focusedLayout!.y0
-    const isEL2Above = el2.layout!.y0 <= focusedLayout!.y0
+  secondary.forEach((el) => {
+    if (!nearestLeft) {
+      nearestLeft = el;
+      return;
+    }
+
+    const isEl1Above = nearestLeft.layout!.y0 <= focusedLayout!.y0;
+    const isEL2Above = el.layout!.y0 <= focusedLayout!.y0;
 
     const el1Distance = isEl1Above
-      ? focusedLayout!.y0 - el1.layout!.y1
-      : el1.layout!.y0 - focusedLayout!.y1
-    const el2Distance = isEL2Above
-      ? focusedLayout!.y0 - el2.layout!.y1
-      : el2.layout!.y0 - focusedLayout!.y1
+      ? focusedLayout!.y0 - nearestLeft.layout!.y1
+      : nearestLeft.layout!.y0 - focusedLayout!.y1;
 
-    return (
-      el1Distance - el2Distance ||
-      focusedLayout.x0 - el1.layout!.x1 - (focusedLayout.x0 - el2.layout!.x1)
-    )
-  })
+    const el2Distance = isEL2Above
+      ? focusedLayout!.y0 - el.layout!.y1
+      : el.layout!.y0 - focusedLayout!.y1;
+
+    if (
+      el1Distance - el2Distance > 0 ||
+      el.layout!.x1 - nearestLeft.layout!.x1 > 0
+    ) {
+      nearestLeft = el;
+    }
+  });
+
+  return nearestLeft;
 }

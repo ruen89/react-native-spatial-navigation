@@ -1,19 +1,19 @@
 /* Dependencies
 ================================================================== */
-import * as React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import * as React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { SpatialApi, SpatialButton, SpatialNavigationGroupContext } from '../'
+import { SpatialApi, SpatialButton, SpatialNavigationGroupContext } from '../';
 
-const { useCallback, useContext, useState } = React
+const { useCallback, useContext, useState } = React;
 
 /* Types
 ================================================================== */
 interface BoxProps {
-  hasTVPreferredFocus?: boolean
-  index: number
-  onPress?: () => void
-  totalCount: number
+  hasTVPreferredFocus?: boolean;
+  index: number;
+  onPress?: () => void;
+  totalCount: number;
 }
 
 /* Box
@@ -24,23 +24,23 @@ export default function ({
   totalCount,
   onPress,
 }: BoxProps) {
-  const [isFocused, setFocused] = useState<boolean>(false)
-  const { groupId } = useContext(SpatialNavigationGroupContext)
-  const idPrefix = `${groupId}-Box-`
-  const id = `${idPrefix}${index}`
+  const [isFocused, setFocused] = useState<boolean>(false);
+  const { groupId } = useContext(SpatialNavigationGroupContext);
+  const idPrefix = `${groupId}-Box-`;
+  const id = `${idPrefix}${index}`;
 
   const handleFocus = useCallback(() => {
-    setFocused(true)
-  }, [])
+    setFocused(true);
+  }, []);
 
   const handleBlur = useCallback(() => {
-    setFocused(false)
-  }, [])
+    setFocused(false);
+  }, []);
 
   const handlePress = useCallback(() => {
-    const reverseIndex = totalCount - 1 - index
-    SpatialApi.setFocusToElement(`${idPrefix}${reverseIndex}`)
-  }, [idPrefix, index, totalCount])
+    const reverseIndex = totalCount - 1 - index;
+    SpatialApi.setFocusToElement(`${idPrefix}${reverseIndex}`);
+  }, [idPrefix, index, totalCount]);
 
   return (
     <SpatialButton
@@ -55,7 +55,7 @@ export default function ({
         <Text style={styles[isFocused ? 'focusText' : 'text']}>{index}</Text>
       </View>
     </SpatialButton>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -78,4 +78,4 @@ const styles = StyleSheet.create({
   focusText: {
     color: '#fff',
   },
-})
+});

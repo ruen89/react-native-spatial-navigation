@@ -1,10 +1,10 @@
 /* Dependencies
 ================================================================== */
-import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import { SpatialApi, SpatialGroup, SpatialNavigationProvider } from '../'
-import Box from './Box'
+import { SpatialApi, SpatialGroup, SpatialNavigationProvider } from '../';
+import Box from './Box';
 
 const groups = [
   {
@@ -15,7 +15,7 @@ const groups = [
       preferredChildFocusId: 'Group-1-Box-4',
     },
     onPress: () => {
-      SpatialApi.setFocusToGroup('Group-3')
+      SpatialApi.setFocusToGroup('Group-3');
     },
   },
   {
@@ -24,10 +24,10 @@ const groups = [
       hasTVPreferredFocus: true,
       id: 'Group-2',
       // preferredChildFocusIndex: 3,
-      // preferredChildFocusId: 'Group-2-Box-2',
+      preferredChildFocusId: 'Group-2-Box-2',
     },
     onPress: () => {
-      SpatialApi.setFocusToGroup('Group-4')
+      SpatialApi.setFocusToGroup('Group-4');
     },
   },
   {
@@ -39,7 +39,7 @@ const groups = [
       shouldTrackChildren: true,
     },
     onPress: () => {
-      SpatialApi.setFocusToGroup('Group-1')
+      SpatialApi.setFocusToGroup('Group-1');
     },
   },
   {
@@ -50,17 +50,17 @@ const groups = [
       preferredChildFocusId: 'Group-4-Box-7',
     },
     onPress: () => {
-      SpatialApi.setFocusToGroup('Group-2')
+      SpatialApi.setFocusToGroup('Group-2');
     },
   },
-]
+];
 
 const colors = [
   'rgba(132, 169, 140, 0.7)',
   'rgba(161, 130, 118, 0.7)',
   'rgba(138, 196, 255, 0.7)',
   'rgba(127, 106, 147, 0.7)',
-]
+];
 
 export function ExampleGroupLayout() {
   return (
@@ -76,8 +76,8 @@ export function ExampleGroupLayout() {
                 {data.map((column, i) => {
                   return (
                     <View key={`column-${i}`}>
-                      {column.map((item, x) => {
-                        const boxIndex = x + i * column.length
+                      {column.map((_, x) => {
+                        const boxIndex = x + i * column.length;
                         return (
                           <Box
                             //hasTVPreferredFocus={boxIndex === 0}
@@ -86,18 +86,18 @@ export function ExampleGroupLayout() {
                             onPress={onPress}
                             totalCount={data.flat().length}
                           />
-                        )
+                        );
                       })}
                     </View>
-                  )
+                  );
                 })}
               </SpatialGroup>
             </View>
-          )
+          );
         })}
       </View>
     </SpatialNavigationProvider>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -118,4 +118,4 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginRight: 40,
   },
-})
+});
