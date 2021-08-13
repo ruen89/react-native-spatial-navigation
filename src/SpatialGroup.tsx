@@ -1,7 +1,12 @@
 /* Dependencies
 ================================================================== */
 import * as React from 'react';
-import { NativeEventEmitter, NativeModules } from 'react-native';
+import {
+  DeviceEventEmitter,
+  NativeEventEmitter,
+  NativeModules,
+  Platform,
+} from 'react-native';
 
 import { SpatialApi } from './core';
 /* Types
@@ -41,7 +46,10 @@ export const SpatialGroup: React.FC<SpatialGroupProps> = (props) => {
   const { current: groupId } = useRef<SpatialId>(id || `GroupId-${Date.now()}`);
   const unregister = useRef<() => void>();
   const { current: eventEmitterRef } = useRef(
-    new NativeEventEmitter(NativeModules.SpatialNavigation)
+    Platform.select({
+      ios: new NativeEventEmitter(NativeModules.SpatialNavigation),
+      default: DeviceEventEmitter,
+    })
   );
 
   const handleBlur = useCallback(() => {
