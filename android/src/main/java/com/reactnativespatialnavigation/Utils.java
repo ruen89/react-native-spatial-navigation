@@ -369,7 +369,13 @@ public class Utils {
 
         // If the group has a prefer group that it want to focus on in the -key- direction
         if (focusedGroupNextGroupFocus.get(key) != null) {
-          nextFocusElement = groups.get(focusedGroupNextGroupFocus.get(key)).getFirstChildToGetFocus();
+          SpatialGroup group = groups.get(focusedGroupNextGroupFocus.get(key));
+          if (group == null) {
+            nextFocusElement = element;
+            Log.d("SPATIALUTIL",  "GROUP IS NULL - element is: " + element.getId());
+          } else {
+            nextFocusElement = group.getFirstChildToGetFocus();
+          }
 
           // Making sure that it never returns a null value which can break the app
          if (nextFocusElement == null) {
